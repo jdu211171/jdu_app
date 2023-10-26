@@ -1,103 +1,118 @@
 import * as React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import { Mail, Bookmark, Link2, Settings } from 'lucide-react-native';
-
-function AllMessages() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Barcha xabarlar!</Text>
-    </View>
-  );
-}
-
-function SavedMessages() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Saqlangan Xabarlar!</Text>
-    </View>
-  );
-}
-
-function AllLinks() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Havolalar!</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Sozlamalar!</Text>
-    </View>
-  );
-}
-
-function MyTabBar({ state, descriptors, navigation }) {
-  return (
-    <View style={{ flexDirection: 'row' }}>
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name;
-
-        const isFocused = state.index === index;
-
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-          });
-
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
-
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          });
-        };
-
-        return (
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={{ flex: 1, alignItems: 'center' }}
-          >
-              <Div><Text>hello</Text></Div>
-            {options.tabBarIcon({ color: isFocused ? 'white' : '#0251B2', size: 25 })}
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-}
+import MessagesScreen from "./app/MessagesScreen";
+import SettingsScreen from "./app/SettingsScreen";
+import BookmarksScreen from "./app/BookmarksScreen";
+import LinksScreen from "./app/LinksScreen";
+import {createStackNavigator} from "@react-navigation/stack";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+function MyStack() {
+    return (
+        <Stack.Navigator
+            initialRouteName="Messages"
+            screenOptions={{
+                headerMode: 'screen',
+                headerTintColor: 'white',
+                headerStyle: { backgroundColor: 'tomato' },
+            }}
+        >
+            <Stack.Screen
+                name="Messages"
+                component={MessagesScreen}
+                options={{
+                    title: 'Awesome app',
+                }}
+            />
+            <Stack.Screen
+                name="Bookmarks"
+                component={BookmarksScreen}
+                options={{
+                    title: 'My profile',
+                }}
+            />
+            <Stack.Screen
+                name="Links"
+                component={LinksScreen}
+                options={{
+                    gestureEnabled: false,
+                }}
+            />
+            <Stack.Screen
+                name="Settings"
+                component={SettingsScreen}
+                options={{
+                    gestureEnabled: false,
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
 
 export default function App() {
     return (
         <NavigationContainer>
-            <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
-                <Tab.Screen name="Xabarlar" component={AllMessages} options={{ tabBarIcon:(props) => <Mail {...props} /> }} />
-                <Tab.Screen name="Saqlangan Xabarlar" component={SavedMessages} options={{tabBarIcon:(props) => <Bookmark {...props} />}} />
-                <Tab.Screen name="Havolalar" component={AllLinks} options={{tabBarIcon:(props) => <Link2 {...props} />}} />
-                <Tab.Screen name="Sozlamalar" component={SettingsScreen} options={{tabBarIcon:(props) => <Settings {...props} />}} />
+            <Tab.Navigator
+                screenOptions={({ route }) => ({
+                    tabBarIcon: ({ focused, color, size }) => {
+                        if (route.name === 'Xabarlar') {
+                            return (
+                                <Ionicons
+                                    name={focused ? 'ios-mail' : 'ios-mail-outline'}
+                                    size={size}
+                                    color={color}
+                                />
+                            );
+                        } else if (route.name === 'Saqlanganlar') {
+                            return (
+                                <Ionicons
+                                    name={focused ? 'bookmark' : 'bookmark-outline'}
+                                    size={size}
+                                    color={color}
+                                />
+                            );
+                        } else if (route.name === 'Linklar') {
+                            return (
+                                <Ionicons
+                                    name={focused ? 'link' : 'link-outline'}
+                                    size={size}
+                                    color={color}
+                                />
+                            );
+                        } else if (route.name === 'Sozlamalar') {
+                            return (
+                                <Ionicons
+                                    name={focused ? 'settings' : 'settings-outline'}
+                                    size={size}
+                                    color={color}
+                                />
+                            );
+                        }
+                    },
+                    tabBarInactiveTintColor: 'gray',
+                    tabBarActiveTintColor: '#0251B2',
+                })}
+            >
+                <Tab.Screen
+                    name="Xabarlar"
+                    component={MessagesScreen}
+                    options={{
+                        tabBarBadge: 99,
+                        tabBarBadgeStyle: {
+                            padding: "2px",
+                            fontSize: 10,
+                            backgroundColor: '#0386D0',
+                        },
+                    }}
+                />
+                <Tab.Screen name="Saqlanganlar" component={BookmarksScreen}/>
+                <Tab.Screen name="Linklar" component={LinksScreen} />
+                <Tab.Screen name="Sozlamalar" component={SettingsScreen} />
             </Tab.Navigator>
         </NavigationContainer>
     );
