@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -104,7 +103,7 @@ export default function App() {
                     options={{
                         tabBarBadge: 99,
                         tabBarBadgeStyle: {
-                            padding: "2px",
+                            padding: 2,
                             fontSize: 10,
                             backgroundColor: '#0386D0',
                         },

@@ -1,84 +1,86 @@
-// Import React Native and some libraries
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useNotifications } from 'reapop';
+import {View, Text, StyleSheet, Platform, TouchableOpacity} from 'react-native';
+import {shadow} from "react-native-paper";
+import {Ionicons} from "@expo/vector-icons";
+import { useNavigation } from '@react-navigation/native';
 
-// Define a custom notification component
 const Notification = ({ title, message, time }) => {
-    // Use the useNotifications hook to get the notification status and actions
-    const { status, dismiss } = useNotifications();
+    const navigation = useNavigation();
 
-    // Define a function to format the time
-    const formatTime = (time) => {
-        // Convert the time string to a date object
-        const date = new Date(time);
-
-        // Get the hours and minutes
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
-
-        // Add leading zeros if needed
-        hours = hours < 10 ? '0' + hours : hours;
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-
-        // Return the formatted time
-        return `${hours}:${minutes}`;
+    const handlePress = () => {
+            navigation.navigate('YourPageName', { message: message }); // replace 'YourPageName' with the name of the page you want to navigate to
     };
 
-    // Return the JSX for the notification component
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Ionicons name="warning" size={24} color="white" />
-                <Text style={styles.title}>{title}</Text>
-                <Ionicons name="close" size={24} color="white" onPress={dismiss} />
-            </View>
-            <View style={styles.body}>
+        <TouchableOpacity onPress={handlePress}>
+            <View style={[styles.container, styles.shadow]}>
+                <View style={styles.flexing}>
+                    <View style={styles.flexing}>
+                        <Ionicons
+                            name={'ellipse'}
+                            size={8}
+                            color={'#0386D0'}
+                        />
+                        <Ionicons
+                            name={'information-circle-outline'}
+                            size={24}
+                            color={'#0386D0'}
+                        />
+                        <Text style={styles.title}>{title}</Text>
+                    </View>
+                    <Ionicons
+                        name={'bookmark-outline'}
+                        size={24}
+                        color={'gray'}
+                    />
+                </View>
                 <Text style={styles.message}>{message}</Text>
-                <Text style={styles.time}>{formatTime(time)}</Text>
+                <Text style={styles.time}>{time}</Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 
-// Define some styles for the notification component
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
-        borderRadius: 10,
-        margin: 10,
-        elevation: 5,
-    },
-    header: {
-        backgroundColor: '#0251B2',
+        borderRadius: 4,
         padding: 10,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        rowGap: 8,
+        backgroundColor: 'white'
+    },
+    flexing: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        columnGap: 3,
+    },
+    shadow: {
+        ...Platform.select({
+            ios: {
+                shadowColor: 'rgba(0, 0, 0, 0.45)',
+                shadowOffset: {width: 0, height: 0},
+                shadowOpacity: 0.45,
+                shadowRadius: 2,
+            },
+            android: {
+                elevation: 2,
+            }
+        })
     },
     title: {
-        color: 'white',
-        fontSize: 18,
         fontWeight: 'bold',
-    },
-    body: {
-        padding: 10,
-        borderBottomLeftRadius: 10,
-        borderBottomRightRadius: 10,
-    },
-    message: {
-        color: 'black',
         fontSize: 16,
     },
-    time: {
-        color: 'gray',
+    message: {
         fontSize: 14,
-        alignSelf: 'flex-end',
     },
-});
+    time: {
+        color: '#575757',
+        fontFamily: 'Inter',
+        fontSize: 10,
+        fontWeight: 400,
+    }
 
-// Export the notification component
+})
+
 export default Notification;
